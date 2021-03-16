@@ -6,7 +6,7 @@ WEEK1_DIR = str(Path(__file__).resolve().parents[1])
 sys.path.insert(1, WEEK1_DIR)
 
 from kmer_composition import get_composition
-DATASET_DIR = os.path.join(os.getcwd(), 'datasets/kmer_composition_dataset')
+DATASET_DIR = os.path.join(os.getcwd(), 'datasets/kmer_composition_test_dataset')
 
 
 class TestKmerComposition(unittest.TestCase) :

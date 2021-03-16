@@ -3,7 +3,6 @@ import os
 import sys
 import random
 import w1lib
-from copy import deepcopy
 DATASET_DIR = os.path.join(os.getcwd(), 'datasets')
 
 
@@ -40,15 +39,14 @@ def main() :
     # Read from dataset file
     with open(args.file, 'r') as f :
         k = f.readline().strip()
-        text = f.readline()
+        text = f.readline().strip()
 
     kmers = get_composition(int(k), text)
 
     output_file_path = "./output.txt"
     with open(output_file_path, 'w') as f :
-        for _ in kmers :
-            f.write(_)
-    # [print(_) for _ in kmers]
+        for _ in kmers : f.write("{}\n".format(_))
+    
     print('done')
 
 if __name__ == "__main__":
