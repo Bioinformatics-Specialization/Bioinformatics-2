@@ -1,9 +1,9 @@
 import argparse
 
 
-class Week1Library():
-    
-    def __init__(self) :
+class Week2Library() :
+
+    def __init__(self) : 
         pass
 
     def create_parser(self, prog_name, description) :
