@@ -43,7 +43,10 @@ def main() :
 
     kmers = get_composition(int(k), text)
 
-    output_file_path = "./output.txt"
+    # Write answers to file.
+    file_name = os.path.splitext(__file__)[0]
+    output_file_path = "./{}_output.txt".format(file_name)
+    
     with open(output_file_path, 'w') as f :
         for _ in kmers : f.write("{}\n".format(_))
     
