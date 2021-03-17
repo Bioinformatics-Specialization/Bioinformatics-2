@@ -50,7 +50,7 @@ def main() :
     with open(output_file_path, 'w') as f :
         for _ in kmers : f.write("{}\n".format(_))
     
-    print('done')
+    print('Output is created here : {}'.format(output_file_path))
 
 if __name__ == "__main__":
     main()

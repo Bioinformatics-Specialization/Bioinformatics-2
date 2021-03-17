@@ -5,6 +5,22 @@ import w1lib
 DATASET_DIR = os.path.join(os.getcwd(), 'datasets')
 
 
+def deBruijn(k, text) :
+    adjacent_dict = {}
+    
+    for i in range(len(text)-k+1) :
+        pattern = text[i:i+k]
+        prefix = pattern[:-1]
+        suffix = pattern[1:]
+
+        if prefix not in adjacent_dict :
+            adjacent_dict[prefix] = [suffix]
+        else :
+            adjacent_dict[prefix].append(suffix)
+
+    return adjacent_dict        
+
+
 def main() :
     util = w1lib.Week1Library()
     description = '''\
@@ -39,16 +55,17 @@ def main() :
         k = f.readline().strip()
         text = f.readline().strip()
 
-    print(k)
-    print(text)
+    graph = deBruijn(int(k), text)
     
-    # output_file = "./output.txt"
-    # with open(output_file, 'w') as f :
-    #     for k, v in graph.items() :
-    #         f.write("{} -> {}\n".format(k, ",".join(v)))
+    # Write answers to file.
+    file_name = os.path.splitext(__file__)[0]
+    output_file_path = "./{}_output.txt".format(file_name)
     
-    # print("done")
-
+    with open(output_file_path, 'w') as f :
+        for k, v in sorted(graph.items()) : 
+            f.write("{} -> {}\n".format(k, ",".join(v)))
+    
+    print('Output is created here : {}'.format(output_file_path))
 
 if __name__ == "__main__":
     main()
