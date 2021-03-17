@@ -3,7 +3,8 @@ import os
 import sys
 import random
 import w1lib
-DATASET_DIR = os.path.join(os.getcwd(), 'datasets')
+PROG_NAME = os.path.splitext(sys.argv[0])[0]
+DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
 
 
 def get_composition(k, text) :
@@ -29,7 +30,7 @@ def main() :
         '''
     args = util.create_parser(__file__, description)
 
-    dataset_path = "{}/{}_dataset.txt".format(DATASET_DIR, os.path.splitext(sys.argv[0])[0])
+    dataset_path = "{}/real_dataset.txt".format(DATASET_DIR)
 
     # Default to the dataset folder, if not provided
     if not args.file : args.file = dataset_path
@@ -44,13 +45,13 @@ def main() :
     kmers = get_composition(int(k), text)
 
     # Write answers to file.
-    file_name = os.path.splitext(__file__)[0]
-    output_file_path = "./{}_output.txt".format(file_name)
+    output_file_path = "./{}_output.txt".format(PROG_NAME)
     
     with open(output_file_path, 'w') as f :
         for _ in kmers : f.write("{}\n".format(_))
     
     print('Output is created here : {}'.format(output_file_path))
+
 
 if __name__ == "__main__":
     main()

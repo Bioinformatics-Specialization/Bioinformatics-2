@@ -5,8 +5,8 @@ from pathlib import Path
 WEEK1_DIR = str(Path(__file__).resolve().parents[1])
 sys.path.insert(1, WEEK1_DIR)
 
-from kmer_composition import get_composition
-DATASET_DIR = os.path.join(os.getcwd(), 'datasets/genome_path_test_dataset')
+from genome_path import genomePath
+DATASET_DIR = os.path.join(os.getcwd(), 'datasets/genome_path')
 
 
 class TestGenomePath(unittest.TestCase):
@@ -35,8 +35,24 @@ class TestGenomePath(unittest.TestCase):
         patterns = self.read_input_data(sample_data_input_path)
         expected_output = self.read_output_data(sample_data_output_path)
         
-        print(patterns)
-        print(expected_output)
+        # Run my alg.
+        output = genomePath(patterns)
+        
+        self.assertEqual(expected_output, output)
+
+        ''' Test test1,2,3 data '''
+        for i in range(NUM_TEST_FILES) :
+            input_path = DATASET_DIR + "/inputs/test{}.txt".format(i+1)
+            output_path = DATASET_DIR + "/outputs/test{}.txt".format(i+1)
+            
+            # Read input/output file
+            patterns = self.read_input_data(input_path)
+            expected_output = self.read_output_data(output_path)
+            
+            # Run my alg.
+            output = genomePath(patterns)
+            
+            self.assertEqual(expected_output, output)
 
 
 if __name__ == "__main__" :

@@ -3,7 +3,8 @@ import os
 import sys
 import random
 import w1lib
-DATASET_DIR = os.path.join(os.getcwd(), 'datasets')
+PROG_NAME = os.path.splitext(sys.argv[0])[0]
+DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
 
 
 def genomePath(kmers) :
@@ -33,7 +34,7 @@ def main() :
         '''
     args = util.create_parser(__file__, description)
 
-    dataset_path = "{}/{}_dataset.txt".format(DATASET_DIR, os.path.splitext(sys.argv[0])[0])
+    dataset_path = "{}/real_dataset.txt".format(DATASET_DIR)
 
     # Default to the dataset folder, if not provided
     if not args.file : args.file = dataset_path

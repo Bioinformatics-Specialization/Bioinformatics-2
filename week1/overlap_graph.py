@@ -2,23 +2,24 @@ import os
 import sys
 import copy
 import w1lib
-DATASET_DIR = os.path.join(os.getcwd(), 'datasets')
+PROG_NAME = os.path.splitext(sys.argv[0])[0]
+DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
 
 
 def overlapGraph(kmers) :
     graph = {kmer: [] for kmer in kmers}
-        
+
     for i in range(len(kmers)) :
         dummy_kmers = kmers.copy()
         for j in range(len(dummy_kmers)) :
-            if kmers[i] == dummy_kmers[j] : continue
-
             if kmers[i][1:] == dummy_kmers[j][:-1] :
                 graph[kmers[i]].append(dummy_kmers[j])
     
     for k in list(graph.keys()) :
         if len(graph[k]) == 0 :
             del graph[k]
+        else :
+            graph[k] = list(set(graph[k]))
 
     return graph
 
@@ -45,7 +46,7 @@ def main() :
         '''
     args = util.create_parser(__file__, description)
 
-    dataset_path = "{}/{}_dataset.txt".format(DATASET_DIR, os.path.splitext(sys.argv[0])[0])
+    dataset_path = "{}/real_dataset.txt".format(DATASET_DIR)
 
     # Default to the dataset folder, if not provided
     if not args.file : args.file = dataset_path
@@ -59,12 +60,14 @@ def main() :
 
     graph = overlapGraph(kmers)
     
-    output_file = "./output.txt"
-    with open(output_file, 'w') as f :
+    # Write answers to file.
+    output_file_path = "./{}_output.txt".format(PROG_NAME)
+    
+    with open(output_file_path, 'w') as f :
         for k, v in graph.items() :
             f.write("{} -> {}\n".format(k, ",".join(v)))
     
-    print("done")
+    print('Output is created here : {}'.format(output_file_path))
 
 
 if __name__ == "__main__":
