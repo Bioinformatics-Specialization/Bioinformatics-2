@@ -88,7 +88,7 @@ def eulerPath(adjacency_dict) :
 def main() :
     util = w2lib.Week2Library()
     description = '''\
-        Given adjacency list, it will reconstruct and output the Eulerian cycle.
+        Given adjacency list, it will reconstruct and output the Eulerian path.
 
         Input File format :
         ---------------------------------------
