@@ -22,7 +22,7 @@ def stringSpelledByGappedPatterns(k, d, paired_kmers) :
     string_length = 2 * k + d + len(paired_kmers) - 1
     read_length = len(pref_pattern)
     match_length = string_length - read_length
-    
+
     if pref_pattern[match_length:] == suff_pattern[:-1*match_length] :
         return pref_pattern + suff_pattern[len(suff_pattern)-match_length:]
 
