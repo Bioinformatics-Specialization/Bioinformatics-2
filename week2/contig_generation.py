@@ -3,126 +3,124 @@ import sys
 import random
 import w2lib
 from pathlib import Path
-from copy import deepcopy
+from itertools import chain
+
 PROG_NAME = os.path.splitext(sys.argv[0])[0]
 DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
 WEEK1_DIR = str(Path(__file__).resolve().parents[1]) + "/week1"
 sys.path.insert(1, WEEK1_DIR)
 from de_bruijn_graph_from_kmers import deBruijnFromKmers
-# from maximal_nonbranching_paths import maximalNonBranchingPaths
 from genome_path import genomePath
 
-def isOnetoOneNode(node, graph) :
-    indegree = 0
-    outdegree = 0
 
-    for k, v in graph.items() :
-        if node in v :
-            indegree += v.count(node)
+def find_nonbranching_path(path, graph, node, recurse) :
+    out_nodes = graph[node]
+    
+    # Base Case : End of graph (no outnodes)
+    if len(out_nodes) == 0 :
+        path.append(out_nodes[0])
+        return path
+
+    paths = []
+
+    for out_node in out_nodes :
+        if not recurse :
+            path = [node]
         
-        if k == node :
-            outdegree += len(v)
-    
-    # print("Checking for node {} in the graph.".format(node))
-    # print("Indegree: {}, Outdegree: {}".format(indegree, outdegree))
+        # Check if it's the end of graph
+        if out_node not in graph :
+            path.append(out_node)
+            paths.append(path)
+            continue
 
-    if indegree == outdegree :
-        return True
-    
-    return False     
+        # Check if subnode (1,1)
+        in_edge = list(chain.from_iterable(graph.values())).count(out_node)
+        out_edge = len(graph[out_node])
+        
+        if (in_edge == 1) and (out_edge == 1) :
+            path.append(out_node)
+            
+            # recursion
+            path = find_nonbranching_path(path, graph, out_node, True)
+
+            paths.append(path)
+
+        else :
+            path.append(out_node)
+
+            paths.append(path)
+        
+    if recurse :
+        return path
+
+    return paths
+
 
 
 def maximalNonBranchingPaths(graph) :
-    paths = []
-    graph_tracker = deepcopy(graph)
+    random.seed(39839)
+    # Create dictionary of nodes and in/out degree
+    degree_dict = {}
+    graph_keys = list(graph.keys())
+    graph_vals = list(chain.from_iterable(graph.values()))
+    nodes = set(graph_keys + graph_vals)
     
+    for node in nodes :
+        if node not in degree_dict :
+            try :
+                outdegree = len(graph[node])
+            except :
+                outdegree = 0
+            indegree = graph_vals.count(node)
+            degree_dict[node] = (indegree, outdegree)
 
-    for each_node in graph.keys() :        
-        if len(graph_tracker[each_node]) == 0 :
-            continue
+    unvisited_node = list(degree_dict.keys())
+    current_node = random.choice(unvisited_node)
+    contigs = []
+    main_nodes = []
 
-        if not isOnetoOneNode(each_node, graph) :
-            if 0 < len(graph[each_node]) :
+    # Iterate through the nodes and find path.
+    while True :
+        # If node has no outdegree, skip
+        if degree_dict[current_node][1] == 0 :
+            current_node = random.choice(unvisited_node)
 
-                for each_outgoing_edge in graph[each_node] :    
-                    nonbranching_path = [each_node, each_outgoing_edge]
-
-                    graph_tracker[each_node].remove(each_outgoing_edge)
-
-                    while isOnetoOneNode(each_outgoing_edge, graph) :
-                        
-                        nonbranching_path.append(graph[each_outgoing_edge][0])
-                        
-                        if graph[each_outgoing_edge][0] in graph_tracker[each_outgoing_edge]:
-                            graph_tracker[each_outgoing_edge].remove(graph[each_outgoing_edge][0])
-                        
-                        each_outgoing_edge = graph[each_outgoing_edge][0]
-
-                    paths.append(nonbranching_path)
-
-    # Remove nodes with empty outgoing edges
-    for k, v in graph.items() :
-        if k in graph_tracker :
-            if len(graph_tracker[k]) == 0 :
-                del graph_tracker[k]
-        
-    print("After cleaning..")
-    for k, v in graph_tracker.items() :
-        print(k, v)
-
-    print(paths)
-
-    # Handle isolated cycles
-    while graph_tracker :
-        
-        node = random.choice(list(graph_tracker))
-        current_node = graph_tracker[node][0]
-        graph_tracker[node].remove(current_node)
-        cycle = [node, current_node]
-
-        if current_node not in graph_tracker : continue
-
-        while current_node != node :
-            if current_node not in graph_tracker : 
+            if len(unvisited_node) == 1 :
                 break
 
-            next_node = graph_tracker[current_node][0]
-            cycle.append(next_node)
-            graph_tracker[current_node].remove(next_node)
-            current_node = next_node
-            
-        # Remove nodes with empty outgoing edges
-        for k, v in graph.items() :
-            if k in graph_tracker :
-                if len(graph_tracker[k]) == 0 :
-                    del graph_tracker[k]
-        
-        paths.append(cycle)
-    
-    return paths
+            continue
 
+        # Skip nodes that are part of a larger path (indegree==outdegree==1)
+        if degree_dict[current_node] == (1,1) :
+            unvisited_node.remove(current_node)
+            current_node = random.choice(unvisited_node)
+            continue
+        
+        main_nodes.append(current_node)
+        
+        if len(unvisited_node) == 1 :
+            break
+
+        unvisited_node.remove(current_node)
+        current_node = random.choice(unvisited_node)
+    
+    for each_node in main_nodes :        
+        paths = find_nonbranching_path([], graph, each_node, False)
+        
+        for path in paths :
+            contig = genomePath(path)
+            contigs.append(contig)
+
+    return sorted(contigs)
 
 def generateContigs(kmers) :
     # Generate deBruijn graph
     deBruijn = deBruijnFromKmers(kmers)
+
+    contigs = maximalNonBranchingPaths(deBruijn)
+
+    return contigs
     
-    for k, v in deBruijn.items() :
-        print(k, v)
-    
-    print("--------------------")
-
-    paths = maximalNonBranchingPaths(deBruijn)
-
-    # print(paths)
-
-    for path in paths :
-        print(genomePath(path))
-    #     print(path)
-
-    # print(genomePath(paths))
-
-
-
 def main() :
     util = w2lib.Week2Library()
     description = '''\
@@ -156,9 +154,8 @@ def main() :
         contents = f.readlines()
         kmers = [_.strip() for _ in contents]
     
-    print(kmers)
-
     result = generateContigs(kmers)
+    print(" ".join(result))
 
 if __name__ == "__main__":
     main()
