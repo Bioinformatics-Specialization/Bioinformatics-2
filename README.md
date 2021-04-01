@@ -1,4 +1,4 @@
-# Bioinformatics-2
+# Genome Sequencing (Bioinformatics II)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Bioinformatics-Specialization/Bioinformatics-2?style=flat)
 ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/Bioinformatics-Specialization/Bioinformatics-2)
 [![Python Versions](https://img.shields.io/pypi/pyversions/yt2mp3.svg)](https://pypi.python.org/pypi/yt2mp3/)
