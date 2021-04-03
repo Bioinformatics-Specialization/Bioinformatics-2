@@ -9,51 +9,34 @@ DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
 
 def peptideEncoding(dna, peptide) :
     encoded_dna = []
+    rc_dna = w3lib.reverseComplement(dna)
     aa_code = w3lib.AMINO_ACIDS
-    genetic_code = w3lib.CODON_TABLE
     CODON_LEN = 3
     WINDOW = len(peptide) * CODON_LEN
-    print("Window size : {}".format(WINDOW))
 
-    rna = dna.replace("T", "U")
-
-    encoded_codons = []
-
-    for aa in peptide :
-        encoded_codons.append(aa_code[aa])
+    # Get all combinations of DNA that will encode the peptide
+    possible_encodings = [ aa_code[aa] for aa in peptide ]
+    possible_encodings = [ "".join(_) for _ in list(itertools.product(*possible_encodings))]
     
-    # [('ATG', 'GCT'), ('ATG', 'GCA'), ('ATG', 'GCC'), ('ATG', 'GCG')]
-    dna_combinations = list(itertools.product(*encoded_codons))
-    dna_combinations = w3lib.combine_and_format(dna_combinations)
-    print(dna_combinations)
-
-    for i in range(0, len(dna)-CODON_LEN+1, CODON_LEN) :
-        substr = dna[i:i+WINDOW]
-        if substr in dna_combinations :
-            encoded_dna.append(substr)
-    
-    print(encoded_dna)
-    # indices = []
-    # for i in range(0, len(rna)-CODON_LEN+1, CODON_LEN) :
-    #     codon = rna[i:i+CODON_LEN]
+    # Consinder the reading frame, which you can shift 3 times.
+    for i in range(CODON_LEN) :
+        ref_dna = dna[i:]
+        ref_rc_dna = rc_dna[i:]
         
-    #     if genetic_code[codon] == peptide[0] :
-    #         indices.append(i)
-    
-    # print(indices)
-    # for idx in indices :
-    #     substring = rna[idx:idx+WINDOW]
-    #     pep = []
-    #     for i in range(0, len(substring)-CODON_LEN+1, CODON_LEN) :
-    #         # print("{} -> {}".format(substring[i:i+CODON_LEN], genetic_code[substring[i:i+CODON_LEN]]))
-    #         pep.append(genetic_code[substring[i:i+CODON_LEN]])
-        
-    #     if "".join(pep) == peptide :
-    #         encoded_dna.append(substring.replace("U", "T"))
-        
-    #     print(substring)
-    
-    # print(encoded_dna)
+        indices = []
+        for j in range(0, len(ref_dna)-WINDOW+1, CODON_LEN) :
+            current_window = ref_dna[j:j+WINDOW]
+            
+            if current_window in possible_encodings :
+                encoded_dna.append(current_window)
+
+        for j in range(0, len(ref_rc_dna)-WINDOW+1, CODON_LEN) :
+            current_window = ref_rc_dna[j:j+WINDOW]
+
+            if current_window in possible_encodings :
+                encoded_dna.append(w3lib.reverseComplement(current_window))
+
+    return encoded_dna
 
 
 
@@ -85,14 +68,9 @@ def main() :
         dna = f.readline().strip()
         peptide = f.readline().strip()
 
-
     patterns = peptideEncoding(dna, peptide)
-    print(patterns)
-
-    rev_dna = util.reverseComplement(dna)
-    print(rev_dna)
-    patterns = peptideEncoding(rev_dna, peptide)
-    print(patterns)
-
+    for patt in patterns :
+        print(patt)
+    
 if __name__ == "__main__":
     main()

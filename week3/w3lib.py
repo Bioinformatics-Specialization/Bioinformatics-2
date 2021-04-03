@@ -1,22 +1,26 @@
 import argparse
 
 AMINO_ACIDS = {
-    "M" : ["ATG"],
-    "I": ["ATA", "ATC", "ATT"],
-    "A":["GCT", "GCA", "GCC", "GCG"],
-    "S":["TCA", "TCC", "TCG", "TCT"],
-    "F": ["TTC","TTT"],
-    "P":["CCA", "CCC", "CCG", "CCT"],
-    "C": ["TGC","TGT"],
-    "K": ["AAG","AAA"],
-    "H": ["CAT","CAC"],
-    "D": ["GAT","GAC"],
-    "V": ["GTA", "GTC", "GTG", "GTT"],
-    "L": ["TTG","TTA","CTA", "CTC", "CTG", "CTT"],
-    "W": ["TGG"],
-    "T": ["ACA", "ACC", "ACG", "ACT"],
-    "R": ["AGA", "AGG", "CGA", "CGG","CGT", "CGC"],
-    "Y": ["TAT", "TAC"]
+    'K': ['AAA', 'AAG'], 
+    'N': ['AAC', 'AAT'], 
+    'T': ['ACA', 'ACC', 'ACG', 'ACT'], 
+    'R': ['AGA', 'AGG', 'CGA', 'CGC', 'CGG', 'CGT'], 
+    'S': ['AGC', 'AGT', 'TCA', 'TCC', 'TCG', 'TCT'], 
+    'I': ['ATA', 'ATC', 'ATT'], 
+    'M': ['ATG'], 
+    'Q': ['CAA', 'CAG'], 
+    'H': ['CAC', 'CAT'], 
+    'P': ['CCA', 'CCC', 'CCG', 'CCT'], 
+    'L': ['CTA', 'CTC', 'CTG', 'CTT', 'TTA', 'TTG'], 
+    'E': ['GAA', 'GAG'], 'D': ['GAC', 'GAT'], 
+    'A': ['GCA', 'GCC', 'GCG', 'GCT'], 
+    'G': ['GGA', 'GGC', 'GGG', 'GGT'], 
+    'V': ['GTA', 'GTC', 'GTG', 'GTT'], 
+    '*': ['TAA', 'TAG', 'TGA'], 
+    'Y': ['TAC', 'TAT'], 
+    'C': ['TGC', 'TGT'], 
+    'W': ['TGG'], 
+    'F': ['TTC', 'TTT']
     }
 
 CODON_TABLE = {
@@ -47,6 +51,21 @@ def combine_and_format(codons_list) :
     
     return substrings
 
+def reverseComplement(text):
+    rc_text = []
+        
+    for letter in text[::-1]:
+        if letter.upper() == "A" :
+            rc_text.append("T")
+        elif letter.upper() == "C" :
+            rc_text.append("G")
+        elif letter.upper() == "G" :
+            rc_text.append("C")
+        else :
+            rc_text.append("A")
+        
+    return "".join(rc_text)
+
 
 class Week3Library() :
     def __init__(self) : 
@@ -63,17 +82,3 @@ class Week3Library() :
 
         return parser.parse_args()
     
-    def reverseComplement(self, text):
-        rc_text = []
-        
-        for letter in text[::-1]:
-            if letter.upper() == "A" :
-                rc_text.append("T")
-            elif letter.upper() == "C" :
-                rc_text.append("G")
-            elif letter.upper() == "G" :
-                rc_text.append("C")
-            else :
-                rc_text.append("A")
-        
-        return "".join(rc_text)
