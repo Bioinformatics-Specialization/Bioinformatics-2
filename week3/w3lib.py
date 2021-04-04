@@ -89,6 +89,36 @@ def reverseComplement(text):
         
     return "".join(rc_text)
 
+def linearSubpeptides(peptide) :
+    subpeptides = [""]
+    pep = list(peptide)
+    aa_mass_table = AA_MASS
+
+    # Get all possible linear subpeptides
+    for i, each_aa in enumerate(pep) :
+        subpeptides.append(each_aa)
+        subpeptide = [each_aa]
+
+        for j in range(i+1, len(pep)) :
+            subpeptide.append(pep[j])
+            subpeptides.append("".join(subpeptide))
+
+    return subpeptides
+
+def prefixSubpeptides(subpeptides) :
+    prefixes = []
+    
+    for subpeptide in subpeptides :
+        if subpeptide == "" : 
+            prefixes.append(max(subpeptides, key=len))
+            continue
+
+        if len(subpeptide) == 1 : 
+            continue
+
+        prefixes.append(subpeptide[:-1])
+
+    return prefixes
 
 class Week3Library() :
     def __init__(self) : 
