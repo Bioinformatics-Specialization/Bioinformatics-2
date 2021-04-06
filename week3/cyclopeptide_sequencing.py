@@ -77,8 +77,7 @@ def cyclopeptideSequencing(spectrum) :
 def main() :
     util = w3lib.Week3Library()
     description = '''\
-        Given the length of the cyclic peptide, it will output the number of all
-        subpeptides.
+        Given spectrum, it will output all the potential cyclopeptides.
 
         Input File format :
         ---------------------------------------
