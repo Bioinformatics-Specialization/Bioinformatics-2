@@ -1,7 +1,6 @@
 import os
 import sys
 import itertools
-import functools
 import w3lib
 from copy import deepcopy
 from pathlib import Path
