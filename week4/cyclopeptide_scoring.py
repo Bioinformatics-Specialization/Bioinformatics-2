@@ -12,13 +12,13 @@ from theoretical_spectrum import theoreticalSpectrum
 def cyclopeptideScoring(peptide, spectrum) :
     theoretical_spectrum = [int(_) for _ in theoreticalSpectrum(peptide).split(" ")]
     
-    # Compare the two spectrums and count matches
+   # Compare the two spectrums and count matches
     score = 0
     i = 0   # Pointer for theoretical_spectrum
     j = 0   # Pointer for spectrum
     while True :
     
-        if (i == len(theoretical_spectrum)-1) and (j == len(spectrum)-1) :
+        if (i == len(theoretical_spectrum)-1) or (j == len(spectrum)-1) :
             break
 
         if theoretical_spectrum[i] == spectrum[j] :
@@ -28,19 +28,13 @@ def cyclopeptideScoring(peptide, spectrum) :
             continue
 
         if spectrum[j] < theoretical_spectrum[i] :
-            if j == len(spectrum)-1 :
-                i = i + 1
-                continue
-            
             j = j + 1
-            
+            continue
             
         if theoretical_spectrum[i] < spectrum[j] :
-            if i == len(theoretical_spectrum)-1 :
-                j = j + 1
-                continue
-
+            
             i = i + 1
+            continue
             
     if theoretical_spectrum[i] == spectrum[j] :
         score = score + 1
