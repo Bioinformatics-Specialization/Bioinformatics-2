@@ -3,6 +3,7 @@ import sys
 import itertools
 import w4lib
 from collections import OrderedDict
+from copy import deepcopy
 from pathlib import Path
 PROG_NAME = os.path.splitext(sys.argv[0])[0]
 DATASET_DIR = os.path.join(os.getcwd(), "datasets/{}".format(PROG_NAME))
@@ -59,17 +60,16 @@ def trim(leaderboard, spectrum, n) :
     for k, v in linearScore.items() :
         orderedScore[k] = v
     
-    trimmed_candidates = []
-    counter = 0
-    cutoff_score = list(orderedScore.values())[n]
-    for k, v in linearScore.items() :
-        if cutoff_score < v :
-            counter = counter + 1
-            trimmed_candidates.append(k)
-        else :
-            break
-    
-    return trimmed_candidates
+    dummy_orderedScore = deepcopy(orderedScore)
+
+    for j in range(n+1, len(orderedScore)) :
+        key = list(orderedScore.keys())[j]
+        target_key = list(orderedScore.keys())[n]
+        
+        if orderedScore[key] < orderedScore[target_key] :
+            del dummy_orderedScore[key]
+
+    return list(dummy_orderedScore.keys())[:n]
         
 
 def main() :
